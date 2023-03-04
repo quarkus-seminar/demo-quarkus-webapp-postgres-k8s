@@ -1,7 +1,10 @@
-== Fragen
+= Fragen
+
+== Backend
 
 * Wieso verwendest Du @QuarkusMain
 * Warum programmieren wir nicht reaktiv?
+** auf diese Frage vorbereiten
 * warum `quarkus.http.host = 0.0.0.0`?
 * Passt es, wenn ich als Dto einen Record verwende?
 * Warum
@@ -14,12 +17,16 @@
 * Das UserRepository verwendet kein Panache.
 * Verwendung von Long als @id, weil int immer 0 als Standardwert
 
+
+== Frontend
+
 * Nach dem Start der Web-App kommt folgende Meldung
 +
 ----
 <e> [webpack-dev-server] [HPM] Error occurred while proxying request localhost:4200/api/user to http://localhost:8080/ [ECONNREFUSED] (https://nodejs.org/api/errors.html#errors_common_system_errors)
 ----
 
+* Sollen wir das frontend entwickeln, oder passt es so, dass wir das Grundgerüst downloaden
 
 
 
