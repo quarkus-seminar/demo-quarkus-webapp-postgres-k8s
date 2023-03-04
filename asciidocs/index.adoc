@@ -567,7 +567,7 @@ npm install --save-dev html-webpack-plugin
 
 ////
 
-=== Download frontend-
+=== Download frontend-scaffolding
 
 ----
 curl -# -O http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/webapp/frontend.zip
@@ -585,6 +585,10 @@ npm start
 ----
 
 * http://localhost:4200
+
+
+
+
 
 
 
