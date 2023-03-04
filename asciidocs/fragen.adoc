@@ -6,7 +6,7 @@
 * Warum programmieren wir nicht reaktiv?
 ** auf diese Frage vorbereiten
 * warum `quarkus.http.host = 0.0.0.0`?
-* Passt es, wenn ich als https://quarkus-seminar.github.io/demo-quarkus-webapp-postgres-k8s/#_userdto[Dto] einen Record verwende?
+* Passt es, wenn ich als https://quarkus-seminar.github.io/demo-quarkus-webapp-postgres-k8s/#_userdto[Dto^] einen Record verwende?
 * Warum
 +
 ----
