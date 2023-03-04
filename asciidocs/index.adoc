@@ -1,6 +1,6 @@
-= Demo-App
-Thomas W. Stütz
-0.5.0, 2020-06-28: JakartaEE, microprofile & Quarkus
+= demo-quarkus-webapp-postgres-k8s
+App: C.Aberger, Dok: T.Stütz
+1.0.0, 2023-03-04: quarkus,postgres,webcomponents & k8s
 ifndef::imagesdir[:imagesdir: images]
 //:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
 :sourcedir: ../src/main/java
