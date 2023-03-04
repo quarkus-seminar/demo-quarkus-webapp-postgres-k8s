@@ -6,7 +6,7 @@
 * Warum programmieren wir nicht reaktiv?
 ** auf diese Frage vorbereiten
 * warum `quarkus.http.host = 0.0.0.0`?
-* Passt es, wenn ich als Dto einen Record verwende?
+* Passt es, wenn ich als https://quarkus-seminar.github.io/demo-quarkus-webapp-postgres-k8s/#_userdto[Dto] einen Record verwende?
 * Warum
 +
 ----
@@ -14,7 +14,7 @@
 //public record UserDto(int id, String name) {
 //}
 ----
-* Das UserRepository verwendet kein Panache.
+* Das https://quarkus-seminar.github.io/demo-quarkus-webapp-postgres-k8s/#_userrepository[UserRepository^] verwendet kein Panache.
 * Verwendung von Long als @id, weil int immer 0 als Standardwert
 
 
