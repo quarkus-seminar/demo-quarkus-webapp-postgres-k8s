@@ -1,0 +1,556 @@
+= Demo-App
+Thomas W. Stütz
+0.5.0, 2020-06-28: JakartaEE, microprofile & Quarkus
+ifndef::imagesdir[:imagesdir: images]
+//:toc-placement!:  // prevents the generation of the doc at this position, so it can be printed afterwards
+:sourcedir: ../src/main/java
+:icons: font
+:sectnums:    // Nummerierung der Überschriften / section numbering
+:toc: left
+:toclevels: 5
+:experimental:
+
+// https://mrhaki.blogspot.com/2014/06/awesome-asciidoc-use-link-attributes.html
+:linkattrs:
+
+//Need this blank line after ifdef, don't know why...
+ifdef::backend-html5[]
+
+// https://fontawesome.com/v4.7.0/icons/
+icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/asciidoctor-docker-template/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/htl-leonding-college/asciidoctor-docker-template] ‏ ‏ ‎
+icon:home[link=https://htl-leonding.github.io/]
+endif::backend-html5[]
+
+// print the toc here (not at the default position)
+toc::[]
+
+== Create App and add Dependencies
+
+* https://code.quarkus.io/?g=at.htl.leonding.demo&a=demo&e=resteasy-jackson&e=smallrye-openapi&e=hibernate-orm-panache&e=jdbc-postgresql&e=websockets&e=smallrye-health&e=container-image-jib[create app on quarkus.io^]
+
+.create quarkus app with web gui
+image::create-quarkus-project-with-gui.png[]
+
+.mit maven
+[source,bash]
+----
+mvn io.quarkus.platform:quarkus-maven-plugin:2.16.3.Final:create \
+    -DprojectGroupId=at.htl.leonding.demo \
+    -DprojectArtifactId=demo \
+    -Dextensions='quarkus-resteasy-jackson,websockets,hibernate-orm-panache,jdbc-postgresql,jib'
+cd demo
+----
+
+.Troubleshooting
+[%collapsible]
+====
+* when there is a problem with 3.9.0 use an older one
+** https://stackoverflow.com/a/75549674/9818338[^]
+
+.mit maven
+[source,bash]
+----
+/opt/apache-maven-3.8.7/bin/mvn io.quarkus.platform:quarkus-maven-plugin:2.16.3.Final:create \
+    -DprojectGroupId=at.htl.leonding.demo \
+    -DprojectArtifactId=demo \
+    -Dextensions='quarkus-resteasy-jackson,websockets,hibernate-orm-panache,jdbc-postgresql,jib'
+cd demo
+----
+====
+
+.mit der Quarkus CLI
+[source,bash]
+----
+quarkus create app at.htl.leonding.demo:backend
+
+quarkus ext add quarkus-resteasy-jackson websockets hibernate-orm-panache jdbc-postgresql jib
+----
+
+.add assertj to pom.xml and click "Load maven changes"
+[source,xml]
+----
+<!-- https://mvnrepository.com/artifact/org.assertj/assertj-core -->
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.24.2</version>
+    <scope>test</scope>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.assertj/assertj-db -->
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-db</artifactId>
+    <version>2.0.2</version>
+    <scope>test</scope>
+</dependency>
+----
+
+== Configure application.properties
+
+.src/main/resources/application.properties
+[source,properties]
+----
+quarkus.datasource.devservices.enabled=false
+quarkus.http.root-path=/api
+
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=app
+quarkus.datasource.password=app
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/db
+
+quarkus.hibernate-orm.database.generation=drop-and-create
+quarkus.hibernate-orm.database.generation.halt-on-error=false
+quarkus.hibernate-orm.sql-load-script=db/import.sql
+
+quarkus.hibernate-orm.log.sql=true
+quarkus.http.access-log.enabled=true
+----
+
+== Local Postgres Database
+
+=== Install Local Database
+
+* Download script for starting postgres in doxcker-compose
+** http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/postgres/postgres-download-scripts.sh
+* copy `postgres-download-scripts.sh` into project-root
+* in terminal: `chmod + ./postgres-download-scripts.sh`
+* run in terminal:
++
+[source,bash]
+----
+./postgres-download-scripts.sh
+./postgres-create-db.sh
+./postgres-start.sh
+----
+
+.output
+----
+[+] Running 2/2
+ ⠿ Container pgadmin   Started                                                           0.5s
+ ⠿ Container postgres  Started                                                           0.5s
+----
+
+image::directory-structure-postgres-db.png[]
+
+=== Load Initial Data at Startup
+
+* create an `import.sql`-file
+
+image::insert-data-folder-structure.png[]
+
+
+.src/main/resources/db/import.sql
+[source,sql]
+----
+INSERT INTO public.tb_user (name) VALUES('Max Mustermann');
+INSERT INTO public.tb_user (name) VALUES('Joe Sixpack');
+INSERT INTO public.tb_user (name) VALUES('Jane Roe');
+INSERT INTO public.tb_user (name) VALUES('John Doe');
+----
+
+
+
+
+=== Start Database Local
+
+.Terminal
+----
+./postgres-start.sh
+----
+
+.output
+----
+[+] Running 3/3
+ ⠿ Network db-postgres_postgres  Created                               0.0s
+ ⠿ Container pgadmin             Started                               0.3s
+ ⠿ Container postgres            Started                               0.3s
+----
+
+=== Stop Database Local
+
+.Terminal
+----
+./postgres-stop.sh
+----
+
+.output
+----
+[+] Running 3/3
+ ⠿ Container pgadmin             Removed                                                                       0.8s
+ ⠿ Container postgres            Removed                                                                       0.1s
+ ⠿ Network db-postgres_postgres  Removed                                                                       0.0s
+----
+
+=== Create Datasource for local database
+
+* When we downloaded and executed the `postgres-download-scripts.sh` we got a file `datasource.txt`
+
+* We open this file
+
+* Copy the whole content kbd:[cmd]+c / kbd:[ctrl]+c
+
+* and insert into
+
+image::datasource-create.png[]
+
+image::datasource-create-settings.png[]
+
+[%collapsible]
+====
+image::datasource-change-credentials-1.png[]
+
+image::datasource-change-credentials-2.png[]
+====
+
+image::datasource-change-test-connection.png[]
+
+image::datasource-table.png[]
+
+
+
+== First REST-request
+
+.Endpoint
+[source,java]
+----
+package at.htl.leonding.demo;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType; // <.>
+
+@Path("/hello")
+public class GreetingResource {
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String hello() {
+        return "Hello RESTEasy";
+    }
+}
+----
+
+<.> Achtung auf den korrekten Import
+
+
+[source,bash]
+----
+./mvnw clean quarkus:dev
+----
+
+image::http-request-create-environment-file.png[]
+
+
+
+image::http-request-environment.png[]
+
+.folder structure
+image::http-request-folder.png[]
+
+.run request
+image::http-request.png[]
+
+image::http-request-result.png[]
+
+
+== Erstellen der User-Funktionalität
+
+* Wir werden nun folgende Struktur erstellen:
+
+image::package-structure-by-feature.png[]
+
+* Dabei werden die Klassen nicht entsprechend ihres Layers, sondern entsprechend der features gegliedert
+
+* https://medium.com/sahibinden-technology/package-by-layer-vs-package-by-feature-7e89cde2ae3a[Package by Layer vs Package by Feature^]
+
+=== User
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+public class User {
+
+    Long id;
+    String name;
+
+}
+----
+
+* cursor auf Feldnamen setzen
+* encapsulate fields kbd:[Strg] + kbd:[T]
+
+image::refactor-encapsulate-fields.png[]
+
+* Generieren der Constructors
+** kbd:[Alt] + kbd:[Einf] / kbd:[⌘] + kbd:[N]
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+public class User {
+
+    private Long id;
+    private String name;
+
+    //region Constructors
+    public User() {
+    }
+
+    public User(String name) {
+        this.name = name;
+    }
+    //endregion
+
+    //region getter and setter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    //endregion
+}
+----
+
+* add jpa-annotations
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "TB_USER")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
+    //region Constructors
+    public User() {
+    }
+
+    public User(String name) {
+        this.name = name;
+    }
+    //endregion
+
+    //region getter and setter
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    //endregion
+
+    @Override
+    public String toString() {
+        return String.format("%d: %s", id, name);
+    }
+
+}
+----
+
+=== UserDto
+
+Dto's (data transfer objects) werden verwendet, um mehrere Daten (entities) in einem einzigen (teuren) Aufruf zu bündeln. Ein weiterer Vorteil ist, dass ev. vertrauliche Daten der Entities nicht exponiert werden.
+(siehe auch https://de.wikipedia.org/wiki/Transferobjekt[1^],
+https://en.wikipedia.org/wiki/Data_transfer_object[2^],
+https://www.baeldung.com/java-dto-pattern[3^])
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+public record UserDto (int id, String name) { }
+----
+
+=== UserMapper
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class UserMapper {
+    public UserDto toResource(User user) {
+        return new UserDto(user.getId(), user.getName());
+    }
+}
+----
+
+=== UserRepository
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import javax.enterprise.context.ApplicationScoped;
+
+@ApplicationScoped
+public class UserRepository implements PanacheRepository<User> {
+}
+----
+
+=== UserResource
+
+image::userresource-getusers.png[]
+
+IMPORTANT: Beachte die Anzeige der Rückgabetypen von IntelliJ. Daher sind die Zeilenschaltungen sehr vorteilhaft
+
+[source,java]
+----
+package at.htl.leonding.demo.entity.user;
+
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Path("/user")
+public class UserResource {
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    UserMapper userMapper;
+
+    @GET
+    public List<UserDto> getUsers() {
+        return userRepository
+                .findAll()
+                .stream()
+                .map(
+                        user -> userMapper.toResource(user)
+                )
+                .collect(Collectors.toList());
+    }
+}
+----
+
+== Run App
+
+.Terminal
+[source,bash]
+----
+./postgres-start.sh
+----
+
+.output
+[%collapsible]
+====
+----
+[INFO] Scanning for projects...
+[INFO]
+[INFO] --------------------< at.htl.leonding.demo:backend >--------------------
+[INFO] Building backend 1.0.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO]
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ backend ---
+[INFO] Deleting /Users/stuetz/work/2023-quarkus-ph-seminar/_tag2/backend/target
+[INFO]
+[INFO] --- quarkus-maven-plugin:2.16.4.Final:dev (default-cli) @ backend ---
+[INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:resources @ backend
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+[INFO] Invoking io.quarkus.platform:quarkus-maven-plugin:2.16.4.Final:generate-code @ backend
+[INFO] Invoking org.apache.maven.plugins:maven-compiler-plugin:3.10.1:compile @ backend
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 6 source files to /Users/stuetz/work/2023-quarkus-ph-seminar/_tag2/backend/target/classes
+[INFO] Invoking org.apache.maven.plugins:maven-resources-plugin:2.6:testResources @ backend
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/stuetz/work/2023-quarkus-ph-seminar/_tag2/backend/src/test/resources
+[INFO] Invoking io.quarkus.platform:quarkus-maven-plugin:2.16.4.Final:generate-code-tests @ backend
+[INFO] Invoking org.apache.maven.plugins:maven-compiler-plugin:3.10.1:testCompile @ backend
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 2 source files to /Users/stuetz/work/2023-quarkus-ph-seminar/_tag2/backend/target/test-classes
+Listening for transport dt_socket at address: 5005
+Hibernate:
+
+    drop table if exists TB_USER cascade
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2023-03-04 13:55:24,750 WARN  [org.hib.eng.jdb.spi.SqlExceptionHelper] (JPA Startup Thread) SQL Warning Code: 0, SQLState: 00000
+
+2023-03-04 13:55:24,751 WARN  [org.hib.eng.jdb.spi.SqlExceptionHelper] (JPA Startup Thread) table "tb_user" does not exist, skipping
+Hibernate:
+
+    create table TB_USER (
+       id int8 generated by default as identity,
+        name varchar(255),
+        primary key (id)
+    )
+
+Hibernate:
+    INSERT INTO public.tb_user (name) VALUES('Max Mustermann')
+Hibernate:
+    INSERT INTO public.tb_user (name) VALUES('Joe Sixpack')
+Hibernate:
+    INSERT INTO public.tb_user (name) VALUES('Jane Roe')
+Hibernate:
+    INSERT INTO public.tb_user (name) VALUES('John Doe')
+2023-03-04 13:55:24,870 INFO  [io.quarkus] (Quarkus Main Thread) backend 1.0.0-SNAPSHOT on JVM (powered by Quarkus 2.16.4.Final) started in 1.778s. Listening on: http://localhost:8080
+2023-03-04 13:55:24,871 INFO  [io.quarkus] (Quarkus Main Thread) Profile dev activated. Live Coding activated.
+2023-03-04 13:55:24,871 INFO  [io.quarkus] (Quarkus Main Thread) Installed features: [agroal, cdi, hibernate-orm, hibernate-orm-panache, jdbc-postgresql, narayana-jta, resteasy, resteasy-jackson, smallrye-context-propagation, vertx, websockets, websockets-client]
+
+--
+Tests paused
+Press [r] to resume testing, [o] Toggle test output, [:] for the terminal, [h] for more options>
+----
+====
+
+== Create Restful Client
+
+.http-requests/requests.http
+[source]
+----
+GET {{local}}/user
+
+###
+----
+image::rest-client-get-user.png[]
+
+
+
+
+
+
+
+
+
+
+
+
+

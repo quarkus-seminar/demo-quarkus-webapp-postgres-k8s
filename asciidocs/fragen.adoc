@@ -1,0 +1,21 @@
+== Fragen
+
+* Wieso verwendest Du @QuarkusMain
+* Warum programmieren wir nicht reaktiv?
+* warum `quarkus.http.host = 0.0.0.0`?
+* Passt es, wenn ich als Dto einen Record verwende?
+* Warum
++
+----
+// we cannot use java 17 currently, otherwise the jib cannot run it.
+//public record UserDto(int id, String name) {
+//}
+----
+* Das UserRepository verwendet kein Panache.
+* Verwendung von Long als @id, weil int immer 0 als Standardwert
+
+
+
+
+
+
