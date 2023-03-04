@@ -565,7 +565,7 @@ pre.rouge .gs {
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_create_app_and_add_dependencies">1. Create App and add Dependencies</a></li>
+<li><a href="#_create_backend_app_and_add_dependencies">1. Create Backend-App and add Dependencies</a></li>
 <li><a href="#_configure_application_properties">2. Configure application.properties</a></li>
 <li><a href="#_local_postgres_database">3. Local Postgres Database</a>
 <ul class="sectlevel2">
@@ -588,6 +588,11 @@ pre.rouge .gs {
 </li>
 <li><a href="#_run_app">6. Run App</a></li>
 <li><a href="#_create_restful_client">7. Create Restful Client</a></li>
+<li><a href="#_create_frontend_app">8. Create Frontend-App</a>
+<ul class="sectlevel2">
+<li><a href="#_download_frontend">8.1. Download frontend-</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -603,7 +608,7 @@ pre.rouge .gs {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_create_app_and_add_dependencies"><a class="anchor" href="#_create_app_and_add_dependencies"></a>1. Create App and add Dependencies</h2>
+<h2 id="_create_backend_app_and_add_dependencies"><a class="anchor" href="#_create_backend_app_and_add_dependencies"></a>1. Create Backend-App and add Dependencies</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -1302,11 +1307,65 @@ Press [r] to resume testing, [o] Toggle test output, [:] for the terminal, [h] f
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_create_frontend_app"><a class="anchor" href="#_create_frontend_app"></a>8. Create Frontend-App</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.npmjs.com/package/npm" target="_blank" rel="noopener">Latest stable npm version</a></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>node -v
+npm -v
+
+# npm install -g npm@9.6.0
+npm install -g npm@latest</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://webpack.js.org/plugins/html-webpack-plugin/" target="_blank" rel="noopener">HtmlWebpackPlugin</a></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_download_frontend"><a class="anchor" href="#_download_frontend"></a>8.1. Download frontend-</h3>
+<div class="listingblock">
+<div class="content">
+<pre>curl -# -O http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/webapp/frontend.zip
+
+# if unzip is installed ...
+unzip frontend.zip
+
+cd frontend/www
+
+npm install
+
+npm update
+
+npm start</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://localhost:4200" class="bare">http://localhost:4200</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version 1.0.0<br>
-Last updated 2023-03-04 18:27:14 UTC
+Last updated 2023-03-04 20:09:52 UTC
 </div>
 </div>
 </body>
