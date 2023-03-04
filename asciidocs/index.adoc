@@ -25,7 +25,7 @@ endif::backend-html5[]
 // print the toc here (not at the default position)
 toc::[]
 
-== Create App and add Dependencies
+== Create Backend-App and add Dependencies
 
 * https://code.quarkus.io/?g=at.htl.leonding.demo&a=demo&e=resteasy-jackson&e=smallrye-openapi&e=hibernate-orm-panache&e=jdbc-postgresql&e=websockets&e=smallrye-health&e=container-image-jib[create app on quarkus.io^]
 
@@ -543,14 +543,48 @@ GET {{local}}/user
 image::rest-client-get-user.png[]
 
 
+== Create Frontend-App
 
 
+* https://www.npmjs.com/package/npm[Latest stable npm version^]
 
+----
+node -v
+npm -v
 
+# npm install -g npm@9.6.0
+npm install -g npm@latest
+----
 
+* https://webpack.js.org/plugins/html-webpack-plugin/[HtmlWebpackPlugin^]
 
+////
+----
+npm install --save-dev webpack webpack-dev-server typescript ts-loader webpack-cli
 
+npm install --save-dev html-webpack-plugin
+----
 
+////
+
+=== Download frontend-
+
+----
+curl -# -O http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/webapp/frontend.zip
+
+# if unzip is installed ...
+unzip frontend.zip
+
+cd frontend/www
+
+npm install
+
+npm update
+
+npm start
+----
+
+* http://localhost:4200
 
 
 
