@@ -17,9 +17,9 @@ ifndef::imagesdir[:imagesdir: images]
 ifdef::backend-html5[]
 
 // https://fontawesome.com/v4.7.0/icons/
-icon:file-text-o[link=https://raw.githubusercontent.com/htl-leonding-college/asciidoctor-docker-template/master/asciidocs/{docname}.adoc] ‏ ‏ ‎
-icon:github-square[link=https://github.com/htl-leonding-college/asciidoctor-docker-template] ‏ ‏ ‎
-icon:home[link=https://htl-leonding.github.io/]
+icon:file-text-o[link=https://raw.githubusercontent.com/quarkus-seminar/demo-quarkus-webapp-postgres-k8s/main/asciidocs/index.adoc] ‏ ‏ ‎
+icon:github-square[link=https://github.com/quarkus-seminar/demo-quarkus-webapp-postgres-k8s] ‏ ‏ ‎
+icon:home[link=https://quarkus-seminar.github.io/demo-quarkus-webapp-postgres-k8s/]
 endif::backend-html5[]
 
 // print the toc here (not at the default position)
