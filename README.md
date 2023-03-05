@@ -1,86 +1,83 @@
-# Asciidoctor Github Pages Template
+# webpack-demo
+Demo for school usage: Quarkus Application Server Backend, Single Source Of Truth Web-Application, Kubernetes Cloud Computing
 
-## Converting
+## Overview
 
-![](./img/conver_strategy.jpg)
+This project consists of 3 parts:
 
-1. will be converted into asciidoc format
-2. will be converted into asciidocs slides
+- the [quarkus](https://quarkus.io/) microprofile [backend](./backend/) service
+- the Frontend Web Application in the [www](./frontend/www/) folder
+- the kubernetes deployment in the [k8s](./k8s/) folder
 
-## Action
+## Building
 
-GitHub Actions will automatically convert the `.adoc` files into html document. You can configure the input and 
-output path with the environmental variables at the top of the actions.
+The backend server must be compiled and deployed to your github container registry. 
 
-> Note: This will not change the configuration for the scripts
+Before building you must follow the steps in [readme.md](./k8s/readme.md) in the k8s folder to change the deployment target to your ghcr.io repository on github.
 
-```yaml
-jobs:
-  build:
-    name: Build & Publish 🚀
-    runs-on: ubuntu-latest
-    env:
-      INPUTPATH: docs
-      OUTPUTPATH: dist
-      SLIDES: true
-      BRANCH: gh-pages
+Then run
+```bash
+./build-and-deploy.sh
 ```
 
-|              | INPUTPATH | OUTPUTPATH | SLIDES         | BRANCH  |
-|--------------|-----------|------------|----------------|---------|
-| type         | string    | string     | boolean        | string  |
+# Platforms
+You can run the application on any kubernetes Platform. 
+Examples are:
+- [minikube](https://minikube.sigs.k8s.io/docs/)
+- Docker - Desktop
+- LeoCloud (https://cloud.htl-leonding.ac.at/)
+- any other cloud ...
 
-## Directory Trigger
+# Requirements
+- jdk
+- maven
+- nodejs
+- npm
+- VS-Code or Intellij
+- docker
+- minikube
+- kubectl
 
-After changing the input path make sure to also change the directory trigger at the top of the file.
+## MacOS
+Should work out-of-the box
 
-```yaml
-on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - docs/**
-```
+## Linux
+First [install docker](https://docs.docker.com/engine/install/ubuntu/).
+Then add your user to the docker group:
+~~~bash
+sudo usermod -aG docker $USER
+~~~
+Then logout and login again.
 
-Just change docs to the prefered input directory.
+Now you can start docker with:
+~~~bash
+sudo service docker start
+~~~
+There is a script [./k8s/install-kube.sh](./k8s/install-kube.sh) to install minikube and kubectl on Ubuntu.
 
-## Scripts
+After that start minikube and check that minikube is ready:
+~~~bash
+minikube start
+minikube addons enable dashboard
+minikube addons enable metrics-server
+minikube dashboard
+kubectl get nodes
+~~~
 
-Sometimes it is useful to just convert or push it locally for a quick update. In the root directory are two scripts
-
-### Convert
-
-This script will just convert it into the ouput directory. See table below for the parameters..
-
-```shell
-./convert.sh <input-dir> <output-dir> <slides-convert>
-```
-
-### Publish
-This script will convert the documents and publish them to the gh-pages branch. See table below for the parameters.
-
-```shell
-./publish.sh <input-dir> <output-dir> <slides-convert>
-```
-
-### Config
-
-You can configure the inut and output dir in the `config.sh` file. 
-
-|              | input-dir | output-dir | slides-convert |
-|--------------|-----------|------------|----------------|
-| isOptional   | true      | true       | true           |
-| defaultValue | input     | output     | true           |
-| type         | string    | string     | boolean        |
-
-
-## Config github repo
-
-![permissions-for-asciidoc.png](img%2Fpermissions-for-asciidoc.png)
-
-![permissions-for-asciidoc.png](img%2Fpermissions-for-asciidoc-2.png)
+## Windows
+Windows users should install [Ubuntu on wsl2](https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-10#1-overview).
+And then continue using the instructions for linux.
 
 
 
+# Docker-Desktop instead of minikube
+Docker-Desktop can be used instead of minikube and portman. In that case kubernetes must be enabled in Docker-Desktop and then the standard storage class must be installed with [docker-standard-storage-class.yaml](./k8s/docker-desktop/docker-standard-storage-class.yaml):  
 
+~~~bash
+kubectl apply -f k8s/docker-desktop/docker-standard-storage-class.yaml
+~~~
+
+### Installation example for Ubuntu 22
+~~~bash
+sudo apt install -y openjdk-17-jdk maven nodejs npm podman
+~~~
