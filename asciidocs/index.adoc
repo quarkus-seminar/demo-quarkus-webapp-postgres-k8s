@@ -570,7 +570,7 @@ npm install --save-dev html-webpack-plugin
 === Download frontend-scaffolding
 
 ----
-curl -# -O http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/webapp/frontend.zip
+curl -# -O http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/2023-03-quarkus-sem/frontend.zip
 
 # if unzip is installed ...
 unzip frontend.zip
@@ -587,7 +587,12 @@ npm start
 * http://localhost:4200
 
 
+=== Download k8s-pipeline
 
+.download to the project-root and extract
+----
+curl -O -# http://edufs.edu.htl-leonding.ac.at/~t.stuetz/download/nvs/scripts/2023-03-quarkus-sem/k8s.zip
+----
 
 
 

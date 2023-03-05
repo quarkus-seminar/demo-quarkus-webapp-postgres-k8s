@@ -29,4 +29,17 @@
 * Sollen wir das frontend entwickeln, oder passt es so, dass wir das Grundgerüst downloaden
 
 
+== Was ist am 1. Tag gleich zu Beginn zu installieren?
+
+* IDE IntelliJ Ultimate, VSC
+* Docker Desktop
+* maven
+** wegen `build-and-deploy.sh` oder ändern auf `./mvnw ...`
+** es reicht ein download in ein Verzeichnis
+* ev. minikube
+
+
+
+
+
 
